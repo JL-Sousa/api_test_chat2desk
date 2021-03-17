@@ -1,6 +1,7 @@
 const fs = require('fs');
 import { IdGenerator } from '../../services/IdGenerator';
 import { HashManager } from '../../services/HashManager';
+import { Authenticator } from '../../services/Authenticator';
 
 class UserController {
   async createUser (request, response) {
@@ -26,9 +27,16 @@ class UserController {
 
       const user = fs.readFileSync('./src/data/database.json', 'utf-8');
       const userAtual = JSON.parse(user);
-      userAtual.push({name, email, hashPassword});
-      fs.writeFileSync('./src/data/database.json', JSON.stringify(userAtual), 'utf-8')
-      response.send({id, name, email, hashPassword});
+      userAtual.push({id, name, email, hashPassword});
+
+      const authenticator = new Authenticator();
+      const token = authenticator.generateToken({id});
+      fs.writeFileSync('./src/data/database.json', JSON.stringify(userAtual), 'utf-8');
+
+      response.status(200).send({
+        message: 'User created successfully',
+        token
+      });
     } catch (error) {
       response.status(400).send({
         message: error.message
