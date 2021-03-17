@@ -3,7 +3,7 @@ import routes from './routes';
 
 class App {
   constructor() {
-    this.server = express(); // inicializando o express
+    this.server = express();
 
     this.middlewares();
     this.routes();
