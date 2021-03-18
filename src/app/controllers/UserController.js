@@ -1,10 +1,8 @@
-const fs = require('fs');
-import { IdGenerator } from '../../services/IdGenerator';
-import { HashManager } from '../../services/HashManager';
+import { User } from '../models/User';
 import { Authenticator } from '../../services/Authenticator';
 
 class UserController {
-  async createUser (request, response) {
+  async signup(request, response) {
     try {
       const { name, email, password } = request.body;
 
@@ -16,27 +14,16 @@ class UserController {
         throw new Error('The password must contain at least six characters');
       };
 
-      const idGenerator = new IdGenerator();
-      const id = idGenerator.generateId();
-
-      const hashManager = new HashManager();
-      const hashPassword = await hashManager.hash(password);
-
-      console.log();
-
-
-      const user = fs.readFileSync('./src/data/database.json', 'utf-8');
-      const userAtual = JSON.parse(user);
-      userAtual.push({id, name, email, hashPassword});
+      const { id } = await User.create(name, email, password);
 
       const authenticator = new Authenticator();
       const token = authenticator.generateToken({id});
-      fs.writeFileSync('./src/data/database.json', JSON.stringify(userAtual), 'utf-8');
-
-      response.status(200).send({
+      
+      return response.status(200).send({
         message: 'User created successfully',
         token
       });
+
     } catch (error) {
       response.status(400).send({
         message: error.message
@@ -44,6 +31,17 @@ class UserController {
     }
    
   }
-}
+
+  async login(request, response) {
+    try {
+      const email = request.body.email;
+      const password = request.body.password;
+    } catch (error) {
+      response.status(400).send({
+        message: error.message
+      });
+    };
+  };
+};
 
 export default new UserController();
