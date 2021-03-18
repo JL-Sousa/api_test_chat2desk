@@ -34,8 +34,8 @@ class UserController {
 
   async login(request, response) {
     try {
-      const email = request.body.email;
-      const password = request.body.password;
+      const { email, password }= request.body;
+    
     } catch (error) {
       response.status(400).send({
         message: error.message
