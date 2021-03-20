@@ -1,5 +1,5 @@
 import { User } from '../models/User';
-import { Authenticator } from '../../services/Authenticator';
+import Authenticator from '../../services/Authenticator';
 
 class UserController {
   async signup(request, response) {
@@ -16,10 +16,9 @@ class UserController {
 
       const { id } = await User.create(name, email, password);
 
-      const authenticator = new Authenticator();
-      const token = authenticator.generateToken({id});
+      const token = Authenticator.generateToken({id});
       
-      return response.status(200).send({
+      return response.status(201).send({
         message: 'User created successfully',
         token
       });
