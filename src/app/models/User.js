@@ -1,5 +1,3 @@
-import { writeFile} from 'fs';
-import { promisify } from 'util';
 import IdGenerator from '../../services/IdGenerator';
 import HashManager from '../../services/HashManager';
 import Database from '../../data/database';
@@ -11,6 +9,7 @@ export class User {
     const id = IdGenerator.generateId();
 
     const hashPassword = await HashManager.hash(password);
+    console.log('Hash:',typeof(hashPassword));
 
     const user = {
       id,
@@ -23,4 +22,16 @@ export class User {
    
     return user;
   }
+
+  static async getUserByEmail(email) {
+    const usersDados = await Database.getAllUsers();
+
+    const isEmailUser = await usersDados.find( user => {
+      return user.email === email;
+    })
+
+    return isEmailUser;
+  }
+
+  
 }
