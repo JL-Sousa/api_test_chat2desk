@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import HashManager from '../../services/HashManager';
+import Authenticator from '../../services/Authenticator';
 
 class SessionController {
   async session(request, response) {
@@ -18,8 +18,16 @@ class SessionController {
       if(!isPasswordCorrect) {
         return response.status(401).json({ error: 'Incorrect password'});
       }
+
+      const { id, name } = user;
       
-      response.status(200).json({ ok: true });
+      response.status(200).json({
+        user: {
+          id,
+          name
+        },
+        token: Authenticator.generateToken({id})
+      });
       
     } catch (error) {
       response.status(400).send({

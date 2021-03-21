@@ -14,13 +14,16 @@ class UserController {
         throw new Error('The password must contain at least six characters');
       };
 
-      const { id } = await User.create(name, email, password);
+      const emailAlreadyExists = await User.getUserByEmail(email);
+      if(emailAlreadyExists) {
+        return response.status(401).json({ error: 'This email is already registered'});
+      }
 
-      const token = Authenticator.generateToken({id});
+      const { id } = await User.create(name, email, password);
       
       return response.status(201).send({
         message: 'User created successfully',
-        token
+        token: Authenticator.generateToken({id})
       });
 
     } catch (error) {

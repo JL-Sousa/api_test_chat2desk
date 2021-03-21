@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 
 class Authenticator {
   static getExpiresIn() {
-    return Number(process.env.ACCESS_TOKEN_EXPIRES_IN);
+    return process.env.ACCESS_TOKEN_EXPIRES_IN;
   }
 
   generateToken(id) {
